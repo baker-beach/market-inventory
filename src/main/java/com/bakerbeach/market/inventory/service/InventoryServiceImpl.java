@@ -3,9 +3,6 @@ package com.bakerbeach.market.inventory.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.bakerbeach.market.commons.MessageImpl;
 import com.bakerbeach.market.commons.MessagesImpl;
 import com.bakerbeach.market.core.api.model.CartItemQualifier;
@@ -19,8 +16,6 @@ import com.bakerbeach.market.inventory.api.service.InventoryServiceException;
 import com.bakerbeach.market.inventory.model.InventoryStatusImpl;
 
 public class InventoryServiceImpl implements InventoryService {
-	private static final Logger log = LoggerFactory.getLogger(InventoryServiceImpl.class.getName());
-
 	private InventoryMongoDao inventoryMongoDao;
 
 	@Override
@@ -45,9 +40,9 @@ public class InventoryServiceImpl implements InventoryService {
 	}
 
 	@Override
-	public void confirm(TransactionData arg0) throws InventoryServiceException {
+	public void confirm(TransactionData transactionData, Order order) throws InventoryServiceException {
 	}
-
+	
 	@Override
 	public void rollBack(TransactionData transactionData) throws InventoryServiceException {
 		if (transactionData != null) {

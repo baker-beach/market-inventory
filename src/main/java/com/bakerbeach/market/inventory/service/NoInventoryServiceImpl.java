@@ -33,7 +33,7 @@ public class NoInventoryServiceImpl implements InventoryService {
 	}
 
 	@Override
-	public void confirm(TransactionData arg0) throws InventoryServiceException {
+	public void confirm(TransactionData transactionData, Order order) throws InventoryServiceException {
 	}
 
 	@Override
