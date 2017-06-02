@@ -1,11 +1,11 @@
 package com.bakerbeach.market.inventory.service;
 
-import com.bakerbeach.market.core.api.model.Order;
 import com.bakerbeach.market.inventory.api.model.InventoryStatus;
 import com.bakerbeach.market.inventory.api.model.TransactionData;
 import com.bakerbeach.market.inventory.api.service.InventoryService;
 import com.bakerbeach.market.inventory.api.service.InventoryServiceException;
 import com.bakerbeach.market.inventory.model.InventoryStatusImpl;
+import com.bakerbeach.market.order.api.model.Order;
 
 public class NoInventoryServiceImpl implements InventoryService {
 
