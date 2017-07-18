@@ -7,6 +7,7 @@ import com.bakerbeach.market.commons.MessageImpl;
 import com.bakerbeach.market.commons.Messages;
 import com.bakerbeach.market.commons.MessagesImpl;
 import com.bakerbeach.market.core.api.model.CartItemQualifier;
+import com.bakerbeach.market.core.api.model.ProductType;
 import com.bakerbeach.market.inventory.api.model.InventoryStatus;
 import com.bakerbeach.market.inventory.api.model.TransactionData;
 import com.bakerbeach.market.inventory.api.service.InventoryService;
@@ -14,6 +15,7 @@ import com.bakerbeach.market.inventory.api.service.InventoryServiceException;
 import com.bakerbeach.market.inventory.model.InventoryStatusImpl;
 import com.bakerbeach.market.order.api.model.Order;
 import com.bakerbeach.market.order.api.model.OrderItem;
+import com.bakerbeach.market.order.api.model.OrderItem.Option;
 
 public class InventoryServiceImpl implements InventoryService {
 	private InventoryMongoDao inventoryMongoDao;
@@ -23,12 +25,27 @@ public class InventoryServiceImpl implements InventoryService {
 		SimpleTransactionData transactionData = new SimpleTransactionData();
 		Messages messages = new MessagesImpl();
 
-		for (OrderItem item : order.getItems()) {
+		for (OrderItem item : order.getItems(true).values()) {
 			try {
 				if (item.getQualifier().equals(CartItemQualifier.PRODUCT)
 						|| item.getQualifier().equals(CartItemQualifier.VPRODUCT)) {
-					decrementInventory(item.getGtin(), item.getQuantity().intValue());
-					transactionData.getBookedItems().add(item);
+					if (item.getType().equals(ProductType.SINGLE)) {
+						decrementInventory(item.getCode(), item.getQuantity().intValue());
+						transactionData.getBookedItems().add(item);
+					} else if (item.getType().equals(ProductType.BUNDLE)) {
+						for (Option option : item.getAllOptions().values()) {
+							decrementInventory(option.getGtin(),
+									option.getQuantity().multiply(item.getQuantity()).intValue());
+						}
+						transactionData.getBookedItems().add(item);
+					} else if (item.getType().equals(ProductType.HYBRID)) {
+						decrementInventory(item.getCode(), item.getQuantity().intValue());
+						for (Option option : item.getAllOptions().values()) {
+							decrementInventory(option.getGtin(),
+									option.getQuantity().multiply(item.getQuantity()).intValue());
+						}
+						transactionData.getBookedItems().add(item);
+					}
 				}
 			} catch (Exception e) {
 				messages.add(new MessageImpl(MessageImpl.TYPE_ERROR, "inventory.outOfStock", item.getGtin()));
@@ -42,14 +59,29 @@ public class InventoryServiceImpl implements InventoryService {
 	@Override
 	public void confirm(TransactionData transactionData, Order order) throws InventoryServiceException {
 	}
-	
+
 	@Override
 	public void rollBack(TransactionData transactionData) throws InventoryServiceException {
 		if (transactionData != null) {
 			for (OrderItem item : transactionData.getBookedItems()) {
 				if (item.getQualifier().equals(CartItemQualifier.PRODUCT)
 						|| item.getQualifier().equals(CartItemQualifier.VPRODUCT)) {
-					incrementInventory(item.getGtin(), item.getQuantity().intValue());
+
+					if (item.getType().equals(ProductType.SINGLE)) {
+						incrementInventory(item.getCode(), item.getQuantity().intValue());
+					} else if (item.getType().equals(ProductType.BUNDLE)) {
+						for (Option option : item.getAllOptions().values()) {
+							incrementInventory(option.getGtin(),
+									option.getQuantity().multiply(item.getQuantity()).intValue());
+						}
+					} else if (item.getType().equals(ProductType.HYBRID)) {
+						incrementInventory(item.getCode(), item.getQuantity().intValue());
+						for (Option option : item.getAllOptions().values()) {
+							incrementInventory(option.getGtin(),
+									option.getQuantity().multiply(item.getQuantity()).intValue());
+						}
+					}
+
 				}
 			}
 		}
