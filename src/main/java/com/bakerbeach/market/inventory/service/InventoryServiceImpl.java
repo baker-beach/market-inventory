@@ -1,8 +1,10 @@
 package com.bakerbeach.market.inventory.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import com.bakerbeach.market.commons.Message;
 import com.bakerbeach.market.commons.MessageImpl;
 import com.bakerbeach.market.commons.Messages;
 import com.bakerbeach.market.commons.MessagesImpl;
@@ -48,7 +50,8 @@ public class InventoryServiceImpl implements InventoryService {
 					}
 				}
 			} catch (Exception e) {
-				messages.add(new MessageImpl(MessageImpl.TYPE_ERROR, "inventory.outOfStock", item.getGtin()));
+				messages.add(new MessageImpl("inventory", MessageImpl.TYPE_ERROR, "inventory.outOfStock",
+						Arrays.asList(Message.TAG_BOX), Arrays.asList(item.getGtin())));
 				throw new InventoryServiceException(messages);
 			}
 		}
@@ -110,7 +113,9 @@ public class InventoryServiceImpl implements InventoryService {
 			InventoryStatus inventoryStatus = inventoryMongoDao.getInventoryStatus(gtin);
 			inventoryMongoDao.decrementInventory(gtin, quantity, inventoryStatus.getOutOfStockLimit());
 		} catch (InventoryDaoException e) {
-			throw new InventoryServiceException(new MessageImpl(MessageImpl.TYPE_ERROR, "inventory.outOfStock", gtin));
+			Message message = new MessageImpl("inventory", MessageImpl.TYPE_ERROR, "inventory.outOfStock",
+					Arrays.asList(Message.TAG_BOX), Arrays.asList(gtin));
+			throw new InventoryServiceException(message);
 		}
 	}
 
