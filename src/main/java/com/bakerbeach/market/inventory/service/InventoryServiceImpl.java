@@ -32,7 +32,7 @@ public class InventoryServiceImpl implements InventoryService {
 				if (item.getQualifier().equals(CartItemQualifier.PRODUCT)
 						|| item.getQualifier().equals(CartItemQualifier.VPRODUCT)) {
 					if (item.getType().equals(ProductType.SINGLE)) {
-						decrementInventory(item.getCode(), item.getQuantity().intValue());
+						decrementInventory(item.getGtin(), item.getQuantity().intValue());
 						transactionData.getBookedItems().add(item);
 					} else if (item.getType().equals(ProductType.BUNDLE)) {
 						for (Option option : item.getAllOptions().values()) {
@@ -41,7 +41,7 @@ public class InventoryServiceImpl implements InventoryService {
 						}
 						transactionData.getBookedItems().add(item);
 					} else if (item.getType().equals(ProductType.HYBRID)) {
-						decrementInventory(item.getCode(), item.getQuantity().intValue());
+						decrementInventory(item.getGtin(), item.getQuantity().intValue());
 						for (Option option : item.getAllOptions().values()) {
 							decrementInventory(option.getGtin(),
 									option.getQuantity().multiply(item.getQuantity()).intValue());
