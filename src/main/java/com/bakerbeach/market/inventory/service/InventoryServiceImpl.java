@@ -71,14 +71,14 @@ public class InventoryServiceImpl implements InventoryService {
 						|| item.getQualifier().equals(CartItemQualifier.VPRODUCT)) {
 
 					if (item.getType().equals(ProductType.SINGLE)) {
-						incrementInventory(item.getCode(), item.getQuantity().intValue());
+						incrementInventory(item.getGtin(), item.getQuantity().intValue());
 					} else if (item.getType().equals(ProductType.BUNDLE)) {
 						for (Option option : item.getAllOptions().values()) {
 							incrementInventory(option.getGtin(),
 									option.getQuantity().multiply(item.getQuantity()).intValue());
 						}
 					} else if (item.getType().equals(ProductType.HYBRID)) {
-						incrementInventory(item.getCode(), item.getQuantity().intValue());
+						incrementInventory(item.getGtin(), item.getQuantity().intValue());
 						for (Option option : item.getAllOptions().values()) {
 							incrementInventory(option.getGtin(),
 									option.getQuantity().multiply(item.getQuantity()).intValue());
