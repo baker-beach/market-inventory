@@ -16,15 +16,15 @@
 		<dependency>
             <groupId>com.bakerbeach.market</groupId>
 			<artifactId>market-inventory-api</artifactId>
-            <version>[3.0.1]</version>
+            <version>[3.1.0]</version>
 		</dependency>
 		<dependency>
             <groupId>com.bakerbeach.market</groupId>
 			<artifactId>market-core-model</artifactId>
-            <version>[3.0.0,3.1.0)</version>
+            <version>[3.1.0,3.2.0)</version>
 		</dependency>
     </dependencies>
 	<build>
     </build>
-	<version>3.0.4</version>
+	<version>3.1.0</version>
 </project>
